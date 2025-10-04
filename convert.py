@@ -3,6 +3,8 @@ import argparse
 import pprint
 import sys
 import json
+# Use the logging module to output status messages
+import logging
 
 
 def load_json(file):
@@ -32,6 +34,10 @@ def get_args():
                         default=None,
                         help='Exclude a folder')
 
+    # Add an argument to specify the log level
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Verbose output')
+
     if len(sys.argv) < 2:
         parser.print_help()
         sys.exit(1)
@@ -48,8 +54,13 @@ def folder_name_to_id(js, name):
 def main():
     print("Bitwarden to Mooltipass")
     args = get_args()
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+    # Call the main function
 
     if not args.file:
+        # Change print to logging
+        logging.error('No file specified')
         print("Error: Need a json file from Bitwarden")
         exit()
 
@@ -91,4 +102,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # Setup the logging module, and set the default log level to INFO and save to a file called convert.log and output to stdout
+    logging.basicConfig(filename='convert.log', level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    # Add a StreamHandler to output to stdout
+    logging.getLogger().addHandler(logging.StreamHandler())
+
