@@ -1,5 +1,5 @@
 [package]
-name = "rust-version"
+name = "bw2mt"
 version = "0.1.0"
 edition = "2024"
 

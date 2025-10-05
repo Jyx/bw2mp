@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {"id": "folder1", "name": "Work"},
+    {"id": "folder2", "name": "Personal"}
+  ],
+  "items": [
+    {
+      "folderId": "folder1",
+      "login": {
+        "username": "user1",
+        "password": "pass1",
+        "uris": [{"uri": "https://work.com"}]
+      }
+    },
+    {
+      "folderId": "folder2",
+      "login": {
+        "username": "user2",
+        "password": "pass2",
+        "uris": [{"uri": "https://personal.com"}]
+      }
+    }
+  ]
+}
