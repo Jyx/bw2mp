@@ -11,6 +11,7 @@ use clap::Parser;
 use regex::Regex;
 use serde::Deserialize;
 use std::fs;
+use std::io::Write;
 
 /// Command-line arguments for the application.
 #[derive(Parser, Debug)]
@@ -21,9 +22,12 @@ struct Cli {
     file: String,
 
     /// Regex pattern to match folder names for inclusion.
-    /// Only items in folders matching this pattern will be processed.
     #[arg(short = 'm', long = "match")]
     pattern: Option<String>,
+
+    /// Regex pattern to match folder names for exclusion.
+    #[arg(short = 'e', long = "exclude")]
+    exclude: Option<String>,
 }
 
 /// Represents a URI (website address) associated with a login.
@@ -96,11 +100,6 @@ fn main() {
 
     println!("Bitwarden to Mooltipass");
 
-    if args.file.is_empty() {
-        eprintln!("Error: Need a json file from Bitwarden");
-        return;
-    }
-
     let cfg = match load_json(&args.file) {
         Ok(config) => config,
         Err(e) => {
@@ -113,7 +112,19 @@ fn main() {
         match Regex::new(pattern) {
             Ok(re) => Some(re),
             Err(e) => {
-                eprintln!("Invalid regex pattern: {}", e);
+                eprintln!("Invalid include regex pattern: {}", e);
+                return;
+            }
+        }
+    } else {
+        None
+    };
+
+    let exclude_regex = if let Some(pattern) = &args.exclude {
+        match Regex::new(pattern) {
+            Ok(re) => Some(re),
+            Err(e) => {
+                eprintln!("Invalid exclude regex pattern: {}", e);
                 return;
             }
         }
@@ -130,8 +141,6 @@ fn main() {
         }
     };
 
-    use std::io::Write;
-
     for item in &cfg.items {
         let folder_name = item
             .folder_id
@@ -139,10 +148,10 @@ fn main() {
             .and_then(|id| find_folder_name_by_id(&cfg.folders, id))
             .unwrap_or_default();
 
-        let include = if let Some(re) = &match_regex {
-            re.is_match(&folder_name)
-        } else {
-            true
+        let include = {
+            let matches_include = match_regex.as_ref().is_none_or(|re| re.is_match(&folder_name));
+            let matches_exclude = exclude_regex.as_ref().is_some_and(|re| re.is_match(&folder_name));
+            matches_include && !matches_exclude
         };
 
         if !include {

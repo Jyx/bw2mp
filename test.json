@@ -1,7 +1,9 @@
 {
   "folders": [
     {"id": "folder1", "name": "Work"},
-    {"id": "folder2", "name": "Personal"}
+    {"id": "folder2", "name": "Personal"},
+    {"id": "folder3", "name": "Social"},
+    {"id": "folder4", "name": "Finance"}
   ],
   "items": [
     {
@@ -18,6 +20,29 @@
         "username": "user2",
         "password": "pass2",
         "uris": [{"uri": "https://personal.com"}]
+      }
+    },
+    {
+      "folderId": "folder3",
+      "login": {
+        "username": "user3",
+        "password": "pass3",
+        "uris": [{"uri": "https://social1.com"}, {"uri": "https://social2.com"}]
+      }
+    },
+    {
+      "folderId": "folder4",
+      "login": {
+        "username": "user4",
+        "password": "pass4",
+        "uris": [{"uri": "https://finance.com"}]
+      }
+    },
+    {
+      "login": {
+        "username": "user5",
+        "password": "pass5",
+        "uris": [{"uri": "https://no-folder.com"}]
       }
     }
   ]
